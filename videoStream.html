@@ -1,7 +1,7 @@
 <script type="text/javascript">
     (function () {
         const DEFAULT_WIDTH = 160
-        RED.nodes.registerType('image viewer', {
+        RED.nodes.registerType('video stream', {
             category: 'sscma-client',
             paletteLabel: "viewer",
             icon: "watch.png",
@@ -33,10 +33,10 @@
             button: {
                 toggle: "active",
                 onclick: function () {
-                    const label = this.name || "image viewer";
+                    const label = this.name || "video stream";
                     var node = this;
                     $.ajax({
-                        url: `image-viewer/${this.id}/${this.active ? 'enable' : 'disable'}`,
+                        url: `video-stream/${this.id}/${this.active ? 'enable' : 'disable'}`,
                         type: "POST",
                         success: function (resp, textStatus, xhr) {
                             const historyEvent = {
@@ -173,7 +173,7 @@
 
         RED.events.on("editor:save", redraw)
 
-        RED.comms.subscribe('sscma-client-image-viewer', function (event, data) {
+        RED.comms.subscribe('sscma-client-video-stream', function (event, data) {
             if (data.hasOwnProperty("data")) {
                 latestImages[data.id] = data.data
                 render(data.id, data.data, RED.nodes.node(data.id))
@@ -185,7 +185,7 @@
     })();
 </script>
 
-<script type="text/html" data-template-name="image viewer">
+<script type="text/html" data-template-name="video stream">
 	<link rel="stylesheet" href="sscma-client/static/css/common.css" type="text/css"/>
 	<div class="form-row">
 		<label for="node-input-name"><i class="fa fa-tag"></i> Name</label>

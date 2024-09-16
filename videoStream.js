@@ -1,5 +1,5 @@
 module.exports = function (RED) {
-    function imageViewer(config) {
+    function videoStream(config) {
         // var Jimp = require('jimp');
         // const isBase64 = require('is-base64');
         const _prefixURIMap = {
@@ -83,7 +83,7 @@ module.exports = function (RED) {
                 //if (isString && isBase64Image && hasMime) {
                     //its already base 64 with mime
                     node.send(msg);//pass it on before displaying
-                    RED.comms.publish("sscma-client-image-viewer", { id: this.id, data: dataInput });
+                    RED.comms.publish("sscma-client-video-stream", { id: this.id, data: dataInput });
                 // } else if (dataInput instanceof Jimp && !gif) {
                 //     dataInput.getBase64(Jimp.AUTO, (err, b64) => {
                 //         if (err) {
@@ -91,7 +91,7 @@ module.exports = function (RED) {
                 //             return;
                 //         }
                 //         node.send(msg);//pass it on before displaying
-                //         RED.comms.publish("sscma-client-image-viewer", { id: this.id, data: b64 });
+                //         RED.comms.publish("sscma-client-video-stream", { id: this.id, data: b64 });
                 //     });
                 // } else {
                 //     var imageData;
@@ -116,7 +116,7 @@ module.exports = function (RED) {
                 //                         nodeStatusError(err, msg, "Error getting base64 image")
                 //                         return;
                 //                     }
-                //                     RED.comms.publish("sscma-client-image-viewer", { id: this.id, data: b64 });
+                //                     RED.comms.publish("sscma-client-video-stream", { id: this.id, data: b64 });
                 //                 });
 
                 //             } catch (err) {
@@ -135,12 +135,12 @@ module.exports = function (RED) {
         });
 
         node.on("close", function () {
-            RED.comms.publish("sscma-client-image-viewer", { id: this.id });
+            RED.comms.publish("sscma-client-video-stream", { id: this.id });
             node.status({});
         });
     }
-    RED.nodes.registerType("image viewer", imageViewer);
-    RED.httpAdmin.post("/image-viewer/:id/:state", RED.auth.needsPermission("image-viewer.write"), function (req, res) {
+    RED.nodes.registerType("video stream", videoStream);
+    RED.httpAdmin.post("/video-stream/:id/:state", RED.auth.needsPermission("video-stream.write"), function (req, res) {
         var state = req.params.state;
         var node = RED.nodes.getNode(req.params.id);
 

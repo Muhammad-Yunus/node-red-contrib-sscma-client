@@ -18,7 +18,7 @@
     "node-red": {
         "version": ">=1.0.0",
         "nodes": {
-            "imageViewer": "imageViewer.js",
+            "videoStream": "videoStream.js",
             "app": "app.js"
         }
     },
