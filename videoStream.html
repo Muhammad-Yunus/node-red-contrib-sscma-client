@@ -258,10 +258,14 @@
                 $img.setAttribute('height', node.width * i.height / i.width);
                 $img.setAttribute('href', data);
 
+                const object_bbox_svg_id = $img.id.replace("img", "obj-bbox");
+                const $object_bbox_svg = document.getElementById(object_bbox_svg_id);
+                const object_label_conf_bg_svg_id = $img.id.replace("img", "obj-label-conf-bg");
+                const $object_label_conf_bg_svg = document.getElementById(object_label_conf_bg_svg_id);
+                const object_label_conf_svg_id = $img.id.replace("img", "obj-label-conf");
+                const $object_label_conf_svg = document.getElementById(object_label_conf_svg_id);
                 if(obj_bbox.length == 4) {
                     // render Object Bounding Box Detection
-                    const object_bbox_svg_id = $img.id.replace("img", "obj-bbox");
-                    const $object_bbox_svg = document.getElementById(object_bbox_svg_id);
                     const cx = obj_bbox[0] || 0;
                     const cy = obj_bbox[1] || 0;
                     const w = obj_bbox[2] || 0;
@@ -277,8 +281,6 @@
                     $object_bbox_svg.setAttribute('points', points_obj_bbox);
 
                     // render Background Confidence & Label Detection
-                    const object_label_conf_bg_svg_id = $img.id.replace("img", "obj-label-conf-bg");
-                    const $object_label_conf_bg_svg = document.getElementById(object_label_conf_bg_svg_id);
                     const points_object_label_conf_bg_svg =
                         (x + w) + "," + (y - 16) + " " + // top right corner
                         (x + w) + "," + (y) + " " + // bottom right corner
@@ -288,11 +290,17 @@
                     $object_label_conf_bg_svg.setAttribute('points', points_object_label_conf_bg_svg);
 
                     // render Object Confidence & Label Detection 
-                    const object_label_conf_svg_id = $img.id.replace("img", "obj-label-conf");
-                    const $object_label_conf_svg = document.getElementById(object_label_conf_svg_id);
                     $object_label_conf_svg.textContent = obj_label + " (" + obj_conf + "%)";
                     $object_label_conf_svg.setAttribute("x", (x + 4));
                     $object_label_conf_svg.setAttribute("y", (y - 4));
+                }
+                else {
+                    // clear bbox, conf & label detection from canvas
+                    $object_bbox_svg.setAttribute('points', "");
+                    $object_label_conf_bg_svg.setAttribute('points', "");
+                    $object_label_conf_svg.textContent = "";
+                    $object_label_conf_svg.setAttribute("x", 0);
+                    $object_label_conf_svg.setAttribute("y", 0);
                 }
             }
         }
