@@ -17,7 +17,7 @@
                     }
                 },
                 data: {
-                    value: "payload",
+                    value: "payload.data.image",
                     required: true,
                     validate: RED.validators.typedInput("dataType")
                 },
@@ -25,7 +25,7 @@
                     value: "msg"
                 },
                 obj_bbox: {
-                    value: "",
+                    value: "payload.data.bbox",
                     required: true, 
                     validate: RED.validators.typedInput("obj_bboxType")
                 },
@@ -33,7 +33,7 @@
                     value: "msg"
                 },
                 obj_conf: {
-                    value: "0",
+                    value: "payload.data.confidence",
                     required: true, 
                     validate: RED.validators.typedInput("obj_confType")
                 },
@@ -41,7 +41,7 @@
                     value: "msg"
                 },
                 obj_label: {
-                    value: "",
+                    value: "payload.data.label",
                     required: true, 
                     validate: RED.validators.typedInput("obj_labelType")
                 },
@@ -125,7 +125,7 @@
                 $('#node-input-conf').typedInput({
                     default: 'msg',
                     typeField: $("#node-input-confType"),
-                    types: ['msg', 'number', 'str']
+                    types: ['msg', 'str']
                 });
                 $('#node-input-conf').val(this.obj_conf);
 
