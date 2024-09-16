@@ -258,7 +258,7 @@
                 $img.setAttribute('height', node.width * i.height / i.width);
                 $img.setAttribute('href', data);
 
-                if(obj_bbox.length == 4) {
+                if(obj_bbox) {
                     // render Object Bounding Box Detection
                     const object_bbox_svg_id = $img.id.replace("img", "obj-bbox");
                     const $object_bbox_svg = document.getElementById(object_bbox_svg_id);
@@ -274,6 +274,7 @@
                         (left + x + w) + "," + (top + y) + " " + // top right corner
                     $object_bbox_svg.setAttribute('points', points_obj_bbox);
 
+                    // render Background Confidence & Label Detection
                     const object_label_conf_bg_svg_id = $img.id.replace("img", "obj-label-conf-bg");
                     const $object_label_conf_bg_svg = document.getElementById(object_label_conf_bg_svg_id);
                     $object_label_conf_svg.setAttribute("x", (left + x));
