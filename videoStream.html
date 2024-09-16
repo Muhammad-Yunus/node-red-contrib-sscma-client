@@ -267,18 +267,28 @@
                     const w = obj_bbox[2] || 0;
                     const h = obj_bbox[3] || 0;
                     const points_obj_bbox =
-                        (left + x + w) + "," + (top + y) + " " + // top right corner
-                        (left + x + w) + "," + (top + y + h) + " " + // bottom right corner
-                        (left + x) + "," + (top + y + h) + " " + // bottom left corner
-                        (left + x) + "," + (top + y) + " " + // top left corner
-                        (left + x + w) + "," + (top + y) // top right corner
+                        (x + w) + "," + (y) + " " + // top right corner
+                        (x + w) + "," + (y + h) + " " + // bottom right corner
+                        (x) + "," + (y + h) + " " + // bottom left corner
+                        (x) + "," + (y) + " " + // top left corner
+                        (x + w) + "," + (y) // top right corner
+                        //(left + x + w) + "," + (top + y) + " " + // top right corner
+                        //(left + x + w) + "," + (top + y + h) + " " + // bottom right corner
+                        //(left + x) + "," + (top + y + h) + " " + // bottom left corner
+                        //(left + x) + "," + (top + y) + " " + // top left corner
+                        //(left + x + w) + "," + (top + y) // top right corner
                     $object_bbox_svg.setAttribute('points', points_obj_bbox);
 
                     // render Background Confidence & Label Detection
                     const object_label_conf_bg_svg_id = $img.id.replace("img", "obj-label-conf-bg");
                     const $object_label_conf_bg_svg = document.getElementById(object_label_conf_bg_svg_id);
-                    $object_label_conf_svg.setAttribute("x", (left + x));
-                    $object_label_conf_svg.setAttribute("y", (top + y));
+                    const points_object_label_conf_bg_svg =
+                        (x + w) + "," + (y - 16) + " " + // top right corner
+                        (x + w) + "," + (y) + " " + // bottom right corner
+                        (x) + "," + (y) + " " + // bottom left corner
+                        (x) + "," + (y - 16) + " " + // top left corner
+                        (x + w) + "," + (y - 16) + " " + // top right corner
+                    $object_label_conf_bg_svg.setAttribute('points', points_object_label_conf_bg_svg);
 
                     // render Object Confidence & Label Detection 
                     const object_label_conf_svg_id = $img.id.replace("img", "obj-label-conf");
