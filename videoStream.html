@@ -24,6 +24,30 @@
                 dataType: {
                     value: "msg"
                 },
+                obj_bbox: {
+                    value: "",
+                    required: true, 
+                    validate: RED.validators.typedInput("obj_bboxType")
+                },
+                obj_bboxType: {
+                    value: "msg"
+                },
+                obj_conf: {
+                    value: 0,
+                    required: true, 
+                    validate: RED.validators.typedInput("obj_confType")
+                },
+                obj_confType: {
+                    value: "msg"
+                },
+                obj_label: {
+                    value: "",
+                    required: true, 
+                    validate: RED.validators.typedInput("obj_labelType")
+                },
+                obj_labelType: {
+                    value: "msg"
+                },
                 active: {
                     value: true
                 }
@@ -90,35 +114,66 @@
                     typeField: $("#node-input-dataType"),
                     types: ['msg', 'flow', 'global', 'str', 'bin']
                 });
+
+                $('#node-input-bbox').typedInput({
+                    default: 'msg',
+                    typeField: $("#node-input-bboxType"),
+                    types: ['msg', 'str']
+                });
+                $('#node-input-bbox').val(this.obj_bbox);
+
+                $('#node-input-conf').typedInput({
+                    default: 'msg',
+                    typeField: $("#node-input-confType"),
+                    types: ['msg', 'number']
+                });
+                $('#node-input-conf').val(this.obj_conf);
+
+                $('#node-input-label').typedInput({
+                    default: 'str',
+                    typeField: $("#node-input-labelType"),
+                    types: ['msg', 'str']
+                });
+                $('#node-input-bbox').val(this.obj_label);
             }
         });
 
         const latestImages = {}
+        const latestObjectBbox = {}
+        const latestObjectConf = {}
+        const latestObjectLabel = {}
 
         function _remove(nodeid) {
             const id = nodeid
             const $img = document.getElementById('sscma-client-viewer-img-' + id)
             const $bubble = document.getElementById('sscma-client-viewer-bubble-' + id)
+            const $object_bbox_svg = document.getElementById('sscma-client-viewer-obj-bbox-' + id)
 
             $img && $img.remove()
             $bubble && $bubble.remove()
+            $object_bbox_svg && $object_bbox_svg.remove()
             delete latestImages[id]
+            delete latestObjectBbox[id]
+            delete latestObjectConf[id]
+            delete latestObjectLabel[id]
         }
 
         function redraw(node) {
             const id = node.id
             const $img = document.getElementById('sscma-client-viewer-img-' + id)
             const $bubble = document.getElementById('sscma-client-viewer-bubble-' + id)
+            const $object_bbox_svg = document.getElementById('sscma-client-viewer-obj-bbox-' + id)
 
             $img && $img.remove()
             $bubble && $bubble.remove()
+            $object_bbox_svg && $object_bbox_svg.remove()
 
             if (latestImages[id]) {
-                render(id, latestImages[id], node)
+                render(id, latestImages[id], latestObjectBbox[id], latestObjectConf[i], latestObjectLabel[i], node)
             }
         }
 
-        function render(id, data, node) {
+        function render(id, data, obj_bbox, obj_conf, obj_label, node) {
             let i = new Image();
             i.src = data;
             let $img = document.getElementById('sscma-client-viewer-img-' + id);
@@ -137,7 +192,21 @@
                 img.setAttribute('x', '1');
                 img.setAttribute('y', '47');
                 img.setAttribute('width', node.width || DEFAULT_WIDTH);
-                // img.setAttribute('onclick', "function(){remove('" + id + "');}");
+
+                const object_bbox_svg = document.createElementNS("http://www.w3.org/2000/svg", 'polyline');
+                object_bbox_svg.setAttribute('id', 'sscma-client-viewer-obj-bbox-' + id);
+                object_bbox_svg.setAttribute('style', 'fill:transparent');
+                object_bbox_svg.setAttribute('stroke', '#fa0000');
+                $container.insertBefore(object_bbox_svg, $container.lastChild.nextSibling);
+
+                const object_label_conf_svg = document.createElementNS("http://www.w3.org/2000/svg", 'text');
+                object_label_conf_svg.setAttribute('id', 'sscma-client-viewer-obj-label-conf-' + id);
+                object_label_conf_svg.setAttribute("font-family", "Arial");
+                object_label_conf_svg.setAttribute("font-size", "16");
+                object_label_conf_svg.setAttribute('stroke', '#fff');
+                object_label_conf_svg.setAttribute("fill", "#fa0000");
+                $container.insertBefore(object_label_conf_svg, $container.lastChild.nextSibling);
+
                 $(img).on("click", function r(el) {
                     _remove(id)
                 })
@@ -147,6 +216,8 @@
 
             i.onload = function () {
                 $img.setAttribute('height', node.width * i.height / i.width);
+
+                // render Bubble SVG
                 const bubbleId = $img.id.replace("img", "bubble");
                 const $bubble = document.getElementById(bubbleId);
                 let imgBbox = $img.getBBox();
@@ -166,6 +237,29 @@
                     left + "," + bottom + " " +
                     left + "," + (top - 21)
                 $bubble.setAttribute('points', points);
+
+
+                // render Object Bounding Box Detection
+                const object_bbox_svg_id = $img.id.replace("img", "obj-bbox");
+                const $object_bbox_svg = document.getElementById(object_bbox_svg_id);
+                const x = obj_bbox[0] || 0;
+                const y = obj_bbox[1] || 0;
+                const w = obj_bbox[2] || 0;
+                const h = obj_bbox[3] || 0;
+                const points_obj_bbox =
+                    (left + x + w) + "," + (top + y) + " " + // top right corner
+                    (left + x + w) + "," + (top + y + h) + " " + // bottom right corner
+                    (left + x) + "," + (top + y + h) + " " + // bottom left corner
+                    (left + x) + "," + (top + y) // top left corner
+                $object_bbox_svg.setAttribute('points', points_obj_bbox);
+
+
+                // render Object Confidence & Label Detection 
+                const object_label_conf_svg_id = $img.id.replace("img", "obj-label-conf");
+                const $object_label_conf_svg = document.getElementById(object_label_conf_svg_id);
+                $object_label_conf_svg.textContent = obj_label + " (" + obj_conf + "%)";
+                $object_label_conf_svg.setAttribute("x", (left + x + 8));
+                $object_label_conf_svg.setAttribute("y", (top + y - 16));
             }
 
             $img.setAttribute('href', data);
@@ -176,7 +270,10 @@
         RED.comms.subscribe('sscma-client-video-stream', function (event, data) {
             if (data.hasOwnProperty("data")) {
                 latestImages[data.id] = data.data
-                render(data.id, data.data, RED.nodes.node(data.id))
+                latestObjectBbox[data.id] = data.obj_bbox
+                latestObjectConf[data.id] = data.obj_conf
+                latestObjectLabel[data.id] = data.obj_label
+                render(data.id, data.data, data.obj_bbox, data.obj_conf, data.obj_label, RED.nodes.node(data.id))
             }
             else {
                 _remove(data.id);
@@ -192,12 +289,27 @@
 		<input type="text" id="node-input-name" placeholder="Name">
 	</div>
 	<div class="form-row">
-		<label style="padding-top: 8px" for="node-input-data"><i class="fa fa-file-image-o"></i> Image</label>
+		<label style="padding-top: 8px" for="node-input-data"><i class="fa fa-file-image-o"></i> Base64 Source</label>
 		<input type="text" id="node-input-data" style="width:70%">
 		<input type="hidden" id="node-input-dataType">
 	</div>
 	<div class="form-row">
-		<label for="node-input-width"><i class="fa fa-arrows-h"></i> Width</label>
+		<label for="node-input-width"><i class="fa fa-arrows-h"></i>Preview Width</label>
 		<input type="number" id="node-input-width">
+	</div>
+	<div class="form-row"></div>
+		<label for="node-input-bbox"><i class="fa fa-object-ungroup"></i>Bounding Box [x,y,w,h]</label>
+		<input type="text" id="node-input-bbox">
+        <input type="hidden" id="node-input-bboxType">
+	</div>
+	<div class="form-row"></div>
+		<label for="node-input-conf"><i class="fa fa-percent"></i>Confidence (%)</label>
+		<input type="number" id="node-input-conf">
+        <input type="hidden" id="node-input-confType">
+	</div>
+	<div class="form-row"></div>
+		<label for="node-input-label"><i class="fa fa-tag"></i>Object Label</label>
+		<input type="text" id="node-input-label">
+        <input type="hidden" id="node-input-labelType">
 	</div>
 </script>
