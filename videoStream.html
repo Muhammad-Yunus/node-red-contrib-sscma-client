@@ -33,7 +33,7 @@
                     value: "msg"
                 },
                 obj_conf: {
-                    value: 0,
+                    value: "0",
                     required: true, 
                     validate: RED.validators.typedInput("obj_confType")
                 },
@@ -125,12 +125,12 @@
                 $('#node-input-conf').typedInput({
                     default: 'msg',
                     typeField: $("#node-input-confType"),
-                    types: ['msg', 'number']
+                    types: ['msg', 'number', 'str']
                 });
                 $('#node-input-conf').val(this.obj_conf);
 
                 $('#node-input-label').typedInput({
-                    default: 'str',
+                    default: 'msg',
                     typeField: $("#node-input-labelType"),
                     types: ['msg', 'str']
                 });
@@ -297,17 +297,17 @@
 		<label for="node-input-width"><i class="fa fa-arrows-h"></i> Width</label>
 		<input type="number" id="node-input-width">
 	</div>
-	<div class="form-row"></div>
+	<div class="form-row">
 		<label style="padding-top: 8px" for="node-input-bbox"><i class="fa fa-object-ungroup"></i> BBox</label>
 		<input type="text" id="node-input-bbox" style="width:70%">
         <input type="hidden" id="node-input-bboxType">
 	</div>
-	<div class="form-row"></div>
+	<div class="form-row">
 		<label style="padding-top: 8px" for="node-input-conf"><i class="fa fa-percent"></i> Conf</label>
-		<input type="number" id="node-input-conf" style="width:70%">
+		<input type="text" id="node-input-conf" style="width:70%">
         <input type="hidden" id="node-input-confType">
 	</div>
-	<div class="form-row"></div>
+	<div class="form-row">
 		<label style="padding-top: 8px" for="node-input-label"><i class="fa fa-tag"></i> Label</label>
 		<input type="text" id="node-input-label" style="width:70%">
         <input type="hidden" id="node-input-labelType">
