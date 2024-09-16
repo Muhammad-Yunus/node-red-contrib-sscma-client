@@ -211,7 +211,7 @@
                 object_bbox_svg.setAttribute('id', 'sscma-client-viewer-obj-bbox-' + id);
                 object_bbox_svg.setAttribute('style', 'fill:transparent');
                 object_bbox_svg.setAttribute('stroke', '#fa0000');
-                object_bbox_svg.setAttribute('stroke-width', '2');
+                object_bbox_svg.setAttribute('stroke-width', '1');
                 $container.insertBefore(object_bbox_svg, $container.lastChild.nextSibling);
 
                 const object_label_conf_bg_svg = document.createElementNS("http://www.w3.org/2000/svg", 'polyline');
@@ -262,10 +262,12 @@
                     // render Object Bounding Box Detection
                     const object_bbox_svg_id = $img.id.replace("img", "obj-bbox");
                     const $object_bbox_svg = document.getElementById(object_bbox_svg_id);
-                    const x = obj_bbox[0] || 0;
-                    const y = obj_bbox[1] || 0;
+                    const cx = obj_bbox[0] || 0;
+                    const cy = obj_bbox[1] || 0;
                     const w = obj_bbox[2] || 0;
                     const h = obj_bbox[3] || 0;
+                    const x = parseInt(cx - w/2) + 1;
+                    const y = parseInt(cy - h/2) + 47;
                     const points_obj_bbox =
                         (x + w) + "," + (y) + " " + // top right corner
                         (x + w) + "," + (y + h) + " " + // bottom right corner
@@ -289,8 +291,8 @@
                     const object_label_conf_svg_id = $img.id.replace("img", "obj-label-conf");
                     const $object_label_conf_svg = document.getElementById(object_label_conf_svg_id);
                     $object_label_conf_svg.textContent = obj_label + " (" + obj_conf + "%)";
-                    $object_label_conf_svg.setAttribute("x", (x + 6));
-                    $object_label_conf_svg.setAttribute("y", (y - 6));
+                    $object_label_conf_svg.setAttribute("x", (x + 4));
+                    $object_label_conf_svg.setAttribute("y", (y - 4));
                 }
             }
         }
