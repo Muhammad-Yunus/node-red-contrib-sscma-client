@@ -1,0 +1,203 @@
+<script type="text/javascript">
+    (function () {
+        const DEFAULT_WIDTH = 160
+        RED.nodes.registerType('image viewer', {
+            category: 'sscma-client',
+            paletteLabel: "viewer",
+            icon: "watch.png",
+            align: 'right',
+            color: '#FFAAAA',
+            defaults: {
+                name: { value: "" },
+                width: {
+                    value: DEFAULT_WIDTH,
+                    required: true,
+                    validate: function (v) {
+                        return !v || !isNaN(parseInt(v, 10));
+                    }
+                },
+                data: {
+                    value: "payload",
+                    required: true,
+                    validate: RED.validators.typedInput("dataType")
+                },
+                dataType: {
+                    value: "msg"
+                },
+                active: {
+                    value: true
+                }
+            },
+            inputs: 1,
+            outputs: 1,
+            button: {
+                toggle: "active",
+                onclick: function () {
+                    const label = this.name || "image viewer";
+                    var node = this;
+                    $.ajax({
+                        url: `image-viewer/${this.id}/${this.active ? 'enable' : 'disable'}`,
+                        type: "POST",
+                        success: function (resp, textStatus, xhr) {
+                            const historyEvent = {
+                                t: 'edit',
+                                node: node,
+                                changes: {
+                                    active: !node.active
+                                },
+                                dirty: node.dirty,
+                                changed: node.changed
+                            };
+                            node.changed = true;
+                            node.dirty = true;
+                            RED.nodes.dirty(true);
+                            RED.history.push(historyEvent);
+                            RED.view.redraw();
+                            if (xhr.status == 200) {
+                                RED.notify("Successfully " + resp + ": " + label, "success");
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            var message;
+
+                            switch (jqXHR.status) {
+                                case 404:
+                                    message = "node not deployed";
+                                    break;
+                                case 0:
+                                    message = "no response from server";
+                                    break;
+                                default:
+                                    message = `unexpected error (${textStatus}) ${errorThrown}`;
+                            }
+
+                            RED.notify(`<strong>Error</strong>: ${message}`, "error");
+                        }
+                    });
+                }
+            },
+
+            label: function () {
+                return this.name || "viewer";
+            },
+            oneditprepare: function () {
+                let node = this;
+                // Set a default width of 160 for existing nodes that don't have that field yet.
+                $('#node-input-width').val(this.width || DEFAULT_WIDTH);
+
+                $('#node-input-data').typedInput({
+                    default: 'msg',
+                    typeField: $("#node-input-dataType"),
+                    types: ['msg', 'flow', 'global', 'str', 'bin']
+                });
+            }
+        });
+
+        const latestImages = {}
+
+        function _remove(nodeid) {
+            const id = nodeid
+            const $img = document.getElementById('sscma-client-viewer-img-' + id)
+            const $bubble = document.getElementById('sscma-client-viewer-bubble-' + id)
+
+            $img && $img.remove()
+            $bubble && $bubble.remove()
+            delete latestImages[id]
+        }
+
+        function redraw(node) {
+            const id = node.id
+            const $img = document.getElementById('sscma-client-viewer-img-' + id)
+            const $bubble = document.getElementById('sscma-client-viewer-bubble-' + id)
+
+            $img && $img.remove()
+            $bubble && $bubble.remove()
+
+            if (latestImages[id]) {
+                render(id, latestImages[id], node)
+            }
+        }
+
+        function render(id, data, node) {
+            let i = new Image();
+            i.src = data;
+            let $img = document.getElementById('sscma-client-viewer-img-' + id);
+            if (!$img) {
+                const $container = document.getElementById(id);
+                if (!$container) { return };
+
+                const bubble = document.createElementNS("http://www.w3.org/2000/svg", 'polyline');
+                bubble.setAttribute('id', 'sscma-client-viewer-bubble-' + id);
+                bubble.setAttribute('style', 'fill:transparent');
+                bubble.setAttribute('stroke', '#999999');
+                $container.insertBefore(bubble, $container.lastChild.nextSibling);
+
+                const img = document.createElementNS("http://www.w3.org/2000/svg", 'image');
+                img.setAttribute('id', 'sscma-client-viewer-img-' + id);
+                img.setAttribute('x', '1');
+                img.setAttribute('y', '47');
+                img.setAttribute('width', node.width || DEFAULT_WIDTH);
+                // img.setAttribute('onclick', "function(){remove('" + id + "');}");
+                $(img).on("click", function r(el) {
+                    _remove(id)
+                })
+                $container.insertBefore(img, $container.lastChild.nextSibling);
+                $img = img;
+            }
+
+            i.onload = function () {
+                $img.setAttribute('height', node.width * i.height / i.width);
+                const bubbleId = $img.id.replace("img", "bubble");
+                const $bubble = document.getElementById(bubbleId);
+                let imgBbox = $img.getBBox();
+                imgBbox.x = 1;
+                imgBbox.y = 47;
+                imgBbox.width = (imgBbox.width || node.width || DEFAULT_WIDTH);
+                imgBbox.height = (imgBbox.height || node.width * i.height / i.width);
+                const left = imgBbox.x;
+                const top = imgBbox.y;
+                const right = imgBbox.x + imgBbox.width;
+                const bottom = (imgBbox.y + imgBbox.height);
+                const points =
+                    (left + 4) + "," + (top - 17) + " " +
+                    (left + 4) + "," + top + " " +
+                    right + "," + top + " " +
+                    right + "," + bottom + " " +
+                    left + "," + bottom + " " +
+                    left + "," + (top - 21)
+                $bubble.setAttribute('points', points);
+            }
+
+            $img.setAttribute('href', data);
+        }
+
+        RED.events.on("editor:save", redraw)
+
+        RED.comms.subscribe('sscma-client-image-viewer', function (event, data) {
+            if (data.hasOwnProperty("data")) {
+                latestImages[data.id] = data.data
+                render(data.id, data.data, RED.nodes.node(data.id))
+            }
+            else {
+                _remove(data.id);
+            }
+        })
+    })();
+</script>
+
+<script type="text/html" data-template-name="image viewer">
+	<link rel="stylesheet" href="sscma-client/static/css/common.css" type="text/css"/>
+	<div class="form-row">
+		<label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+		<input type="text" id="node-input-name" placeholder="Name">
+	</div>
+	<div class="form-row">
+		<label style="padding-top: 8px" for="node-input-data"><i class="fa fa-file-image-o"></i> Image</label>
+		<input type="text" id="node-input-data" style="width:70%">
+		<input type="hidden" id="node-input-dataType">
+	</div>
+	<div class="form-row">
+		<label for="node-input-width"><i class="fa fa-arrows-h"></i> Width</label>
+		<input type="number" id="node-input-width">
+	</div>
+</script>
