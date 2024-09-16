@@ -258,8 +258,7 @@
                 $img.setAttribute('height', node.width * i.height / i.width);
                 $img.setAttribute('href', data);
 
-                console.log(obj_bbox);
-                if(obj_bbox) {
+                if(obj_bbox.length == 4) {
                     // render Object Bounding Box Detection
                     const object_bbox_svg_id = $img.id.replace("img", "obj-bbox");
                     const $object_bbox_svg = document.getElementById(object_bbox_svg_id);
@@ -271,7 +270,7 @@
                         (left + x + w) + "," + (top + y) + " " + // top right corner
                         (left + x + w) + "," + (top + y + h) + " " + // bottom right corner
                         (left + x) + "," + (top + y + h) + " " + // bottom left corner
-                        (left + x) + "," + (top + y) // top left corner
+                        (left + x) + "," + (top + y) + // top left corner
                         (left + x + w) + "," + (top + y) + " " + // top right corner
                     $object_bbox_svg.setAttribute('points', points_obj_bbox);
 
