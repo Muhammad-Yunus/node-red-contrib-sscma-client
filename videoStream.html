@@ -115,26 +115,26 @@
                     types: ['msg', 'flow', 'global', 'str', 'bin']
                 });
 
-                $('#node-input-bbox').typedInput({
+                $('#node-input-obj_bbox').typedInput({
                     default: 'msg',
-                    typeField: $("#node-input-bboxType"),
+                    typeField: $("#node-input-obj_bboxType"),
                     types: ['msg', 'str']
                 });
-                $('#node-input-bbox').val(this.obj_bbox);
+                //$('#node-input-obj_bbox').val(this.obj_bbox);
 
-                $('#node-input-conf').typedInput({
+                $('#node-input-obj_conf').typedInput({
                     default: 'msg',
-                    typeField: $("#node-input-confType"),
+                    typeField: $("#node-input-obj_confType"),
                     types: ['msg', 'str']
                 });
-                $('#node-input-conf').val(this.obj_conf);
+                //$('#node-input-obj_conf').val(this.obj_conf);
 
-                $('#node-input-label').typedInput({
+                $('#node-input-obj_label').typedInput({
                     default: 'msg',
-                    typeField: $("#node-input-labelType"),
+                    typeField: $("#node-input-obj_labelType"),
                     types: ['msg', 'str']
                 });
-                $('#node-input-label').val(this.obj_label);
+                //$('#node-input-obj_label').val(this.obj_label);
             }
         });
 
@@ -298,18 +298,18 @@
 		<input type="number" id="node-input-width">
 	</div>
 	<div class="form-row">
-		<label style="padding-top: 8px" for="node-input-bbox"><i class="fa fa-object-ungroup"></i> BBox</label>
-		<input type="text" id="node-input-bbox" style="width:70%">
-        <input type="hidden" id="node-input-bboxType">
+		<label style="padding-top: 8px" for="node-input-obj_bbox"><i class="fa fa-object-ungroup"></i> BBox</label>
+		<input type="text" id="node-input-obj_bbox" style="width:70%">
+        <input type="hidden" id="node-input-obj_bboxType">
 	</div>
 	<div class="form-row">
-		<label style="padding-top: 8px" for="node-input-conf"><i class="fa fa-percent"></i> Conf</label>
-		<input type="text" id="node-input-conf" style="width:70%">
-        <input type="hidden" id="node-input-confType">
+		<label style="padding-top: 8px" for="node-input-obj_conf"><i class="fa fa-percent"></i> Conf</label>
+		<input type="text" id="node-input-obj_conf" style="width:70%">
+        <input type="hidden" id="node-input-obj_confType">
 	</div>
 	<div class="form-row">
-		<label style="padding-top: 8px" for="node-input-label"><i class="fa fa-tag"></i> Label</label>
-		<input type="text" id="node-input-label" style="width:70%">
-        <input type="hidden" id="node-input-labelType">
+		<label style="padding-top: 8px" for="node-input-obj_label"><i class="fa fa-tag"></i> Label</label>
+		<input type="text" id="node-input-obj_label" style="width:70%">
+        <input type="hidden" id="node-input-obj_labelType">
 	</div>
 </script>
