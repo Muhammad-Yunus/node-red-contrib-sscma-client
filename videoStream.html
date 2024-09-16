@@ -202,9 +202,9 @@
                 const object_label_conf_svg = document.createElementNS("http://www.w3.org/2000/svg", 'text');
                 object_label_conf_svg.setAttribute('id', 'sscma-client-viewer-obj-label-conf-' + id);
                 object_label_conf_svg.setAttribute("font-family", "Arial");
-                object_label_conf_svg.setAttribute("font-size", "16");
-                object_label_conf_svg.setAttribute('stroke', '#fff');
-                object_label_conf_svg.setAttribute("fill", "#fa0000");
+                object_label_conf_svg.setAttribute("font-size", "12");
+                object_label_conf_svg.setAttribute('stroke', '#fa0000');
+                //object_label_conf_svg.setAttribute("fill", "#fa0000");
                 $container.insertBefore(object_label_conf_svg, $container.lastChild.nextSibling);
 
                 $(img).on("click", function r(el) {
@@ -238,28 +238,28 @@
                     left + "," + (top - 21)
                 $bubble.setAttribute('points', points);
 
+                if(obj_bbox.length == 4) {
+                    // render Object Bounding Box Detection
+                    const object_bbox_svg_id = $img.id.replace("img", "obj-bbox");
+                    const $object_bbox_svg = document.getElementById(object_bbox_svg_id);
+                    const x = obj_bbox[0] || 0;
+                    const y = obj_bbox[1] || 0;
+                    const w = obj_bbox[2] || 0;
+                    const h = obj_bbox[3] || 0;
+                    const points_obj_bbox =
+                        (left + x + w) + "," + (top + y) + " " + // top right corner
+                        (left + x + w) + "," + (top + y + h) + " " + // bottom right corner
+                        (left + x) + "," + (top + y + h) + " " + // bottom left corner
+                        (left + x) + "," + (top + y) // top left corner
+                    $object_bbox_svg.setAttribute('points', points_obj_bbox);
 
-                // render Object Bounding Box Detection
-                const object_bbox_svg_id = $img.id.replace("img", "obj-bbox");
-                const $object_bbox_svg = document.getElementById(object_bbox_svg_id);
-                const x = obj_bbox[0] || 0;
-                const y = obj_bbox[1] || 0;
-                const w = obj_bbox[2] || 0;
-                const h = obj_bbox[3] || 0;
-                const points_obj_bbox =
-                    (left + x + w) + "," + (top + y) + " " + // top right corner
-                    (left + x + w) + "," + (top + y + h) + " " + // bottom right corner
-                    (left + x) + "," + (top + y + h) + " " + // bottom left corner
-                    (left + x) + "," + (top + y) // top left corner
-                $object_bbox_svg.setAttribute('points', points_obj_bbox);
-
-
-                // render Object Confidence & Label Detection 
-                const object_label_conf_svg_id = $img.id.replace("img", "obj-label-conf");
-                const $object_label_conf_svg = document.getElementById(object_label_conf_svg_id);
-                $object_label_conf_svg.textContent = obj_label + " (" + obj_conf + "%)";
-                $object_label_conf_svg.setAttribute("x", (left + x + 8));
-                $object_label_conf_svg.setAttribute("y", (top + y - 16));
+                    // render Object Confidence & Label Detection 
+                    const object_label_conf_svg_id = $img.id.replace("img", "obj-label-conf");
+                    const $object_label_conf_svg = document.getElementById(object_label_conf_svg_id);
+                    $object_label_conf_svg.textContent = obj_label + " (" + obj_conf + "%)";
+                    $object_label_conf_svg.setAttribute("x", (left + x));
+                    $object_label_conf_svg.setAttribute("y", (top + y));
+                }
             }
 
             $img.setAttribute('href', data);
