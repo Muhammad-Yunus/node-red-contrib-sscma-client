@@ -148,10 +148,13 @@
             const $img = document.getElementById('sscma-client-viewer-img-' + id)
             const $bubble = document.getElementById('sscma-client-viewer-bubble-' + id)
             const $object_bbox_svg = document.getElementById('sscma-client-viewer-obj-bbox-' + id)
+            const $object_label_conf_svg = document.getElementById('sscma-client-viewer-obj-label-conf-' + id)
+            
 
             $img && $img.remove()
             $bubble && $bubble.remove()
             $object_bbox_svg && $object_bbox_svg.remove()
+            $object_label_conf_svg && $object_label_conf_svg.remove()
             delete latestImages[id]
             delete latestObjectBbox[id]
             delete latestObjectConf[id]
@@ -163,11 +166,13 @@
             const $img = document.getElementById('sscma-client-viewer-img-' + id)
             const $bubble = document.getElementById('sscma-client-viewer-bubble-' + id)
             const $object_bbox_svg = document.getElementById('sscma-client-viewer-obj-bbox-' + id)
+            const $object_label_conf_svg = document.getElementById('sscma-client-viewer-obj-label-conf-' + id)
 
             $img && $img.remove()
             $bubble && $bubble.remove()
             $object_bbox_svg && $object_bbox_svg.remove()
-
+            $object_label_conf_svg && $object_label_conf_svg.remove()
+            
             if (latestImages[id]) {
                 render(id, latestImages[id], latestObjectBbox[id], latestObjectConf[i], latestObjectLabel[i], node)
             }
