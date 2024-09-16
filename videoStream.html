@@ -272,11 +272,6 @@
                         (x) + "," + (y + h) + " " + // bottom left corner
                         (x) + "," + (y) + " " + // top left corner
                         (x + w) + "," + (y) // top right corner
-                        //(left + x + w) + "," + (top + y) + " " + // top right corner
-                        //(left + x + w) + "," + (top + y + h) + " " + // bottom right corner
-                        //(left + x) + "," + (top + y + h) + " " + // bottom left corner
-                        //(left + x) + "," + (top + y) + " " + // top left corner
-                        //(left + x + w) + "," + (top + y) // top right corner
                     $object_bbox_svg.setAttribute('points', points_obj_bbox);
 
                     // render Background Confidence & Label Detection
@@ -294,8 +289,8 @@
                     const object_label_conf_svg_id = $img.id.replace("img", "obj-label-conf");
                     const $object_label_conf_svg = document.getElementById(object_label_conf_svg_id);
                     $object_label_conf_svg.textContent = obj_label + " (" + obj_conf + "%)";
-                    $object_label_conf_svg.setAttribute("x", (left + x + 6));
-                    $object_label_conf_svg.setAttribute("y", (top + y - 6));
+                    $object_label_conf_svg.setAttribute("x", (x + 6));
+                    $object_label_conf_svg.setAttribute("y", (y - 6));
                 }
             }
         }
