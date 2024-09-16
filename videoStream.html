@@ -149,12 +149,13 @@
             const $bubble = document.getElementById('sscma-client-viewer-bubble-' + id)
             const $object_bbox_svg = document.getElementById('sscma-client-viewer-obj-bbox-' + id)
             const $object_label_conf_svg = document.getElementById('sscma-client-viewer-obj-label-conf-' + id)
-            
+            const $object_label_conf_bg_svg = document.getElementById('sscma-client-viewer-obj-label-conf-bg-' + id)
 
             $img && $img.remove()
             $bubble && $bubble.remove()
             $object_bbox_svg && $object_bbox_svg.remove()
             $object_label_conf_svg && $object_label_conf_svg.remove()
+            $object_label_conf_bg_svg && $object_label_conf_bg_svg.remove()
             delete latestImages[id]
             delete latestObjectBbox[id]
             delete latestObjectConf[id]
@@ -167,11 +168,13 @@
             const $bubble = document.getElementById('sscma-client-viewer-bubble-' + id)
             const $object_bbox_svg = document.getElementById('sscma-client-viewer-obj-bbox-' + id)
             const $object_label_conf_svg = document.getElementById('sscma-client-viewer-obj-label-conf-' + id)
+            const $object_label_conf_bg_svg = document.getElementById('sscma-client-viewer-obj-label-conf-bg-' + id)
 
             $img && $img.remove()
             $bubble && $bubble.remove()
             $object_bbox_svg && $object_bbox_svg.remove()
             $object_label_conf_svg && $object_label_conf_svg.remove()
+            $object_label_conf_bg_svg && $object_label_conf_bg_svg.remove()
 
             if (latestImages[id]) {
                 render(id, latestImages[id], latestObjectBbox[id], latestObjectConf[i], latestObjectLabel[i], node)
@@ -196,15 +199,22 @@
                 object_bbox_svg.setAttribute('id', 'sscma-client-viewer-obj-bbox-' + id);
                 object_bbox_svg.setAttribute('style', 'fill:transparent');
                 object_bbox_svg.setAttribute('stroke', '#fa0000');
-                object_bbox_svg.setAttribute('stroke-width', '4');
+                object_bbox_svg.setAttribute('stroke-width', '2');
                 $container.insertBefore(object_bbox_svg, $container.lastChild.nextSibling);
+
+                const object_label_conf_bg_svg = document.createElementNS("http://www.w3.org/2000/svg", 'polyline');
+                object_label_conf_bg_svg.setAttribute('id', 'sscma-client-viewer-obj-label-conf-bg-' + id);
+                object_label_conf_bg_svg.setAttribute('stroke', '#fa0000');
+                object_label_conf_bg_svg.setAttribute('fill', "#fa0000");
+                object_label_conf_bg_svg.setAttribute('stroke-width', '1');
+                $container.insertBefore(object_label_conf_bg_svg, $container.lastChild.nextSibling);
 
                 const object_label_conf_svg = document.createElementNS("http://www.w3.org/2000/svg", 'text');
                 object_label_conf_svg.setAttribute('id', 'sscma-client-viewer-obj-label-conf-' + id);
-                object_label_conf_svg.setAttribute("font-family", "Arial");
+                object_label_conf_svg.setAttribute("font-family", "arial");
                 object_label_conf_svg.setAttribute("font-size", "12");
-                object_label_conf_svg.setAttribute('stroke', '#fa0000');
-                //object_label_conf_svg.setAttribute("fill", "#fa0000");
+                object_label_conf_svg.setAttribute('stroke-width', '0');
+                object_label_conf_svg.setAttribute("fill", "#fff");
                 $container.insertBefore(object_label_conf_svg, $container.lastChild.nextSibling);
 
                 const img = document.createElementNS("http://www.w3.org/2000/svg", 'image');
@@ -221,8 +231,6 @@
             }
 
             i.onload = function () {
-                $img.setAttribute('height', node.width * i.height / i.width);
-
                 // render Bubble SVG
                 const bubbleId = $img.id.replace("img", "bubble");
                 const $bubble = document.getElementById(bubbleId);
@@ -244,6 +252,10 @@
                     left + "," + (top - 21)
                 $bubble.setAttribute('points', points);
 
+                // render Image Frame
+                $img.setAttribute('height', node.width * i.height / i.width);
+                $img.setAttribute('href', data);
+
                 if(obj_bbox.length == 4) {
                     // render Object Bounding Box Detection
                     const object_bbox_svg_id = $img.id.replace("img", "obj-bbox");
@@ -257,18 +269,22 @@
                         (left + x + w) + "," + (top + y + h) + " " + // bottom right corner
                         (left + x) + "," + (top + y + h) + " " + // bottom left corner
                         (left + x) + "," + (top + y) // top left corner
+                        (left + x + w) + "," + (top + y) + " " + // top right corner
                     $object_bbox_svg.setAttribute('points', points_obj_bbox);
+
+                    const object_label_conf_bg_svg_id = $img.id.replace("img", "obj-label-conf-bg");
+                    const $object_label_conf_bg_svg = document.getElementById(object_label_conf_bg_svg_id);
+                    $object_label_conf_svg.setAttribute("x", (left + x));
+                    $object_label_conf_svg.setAttribute("y", (top + y));
 
                     // render Object Confidence & Label Detection 
                     const object_label_conf_svg_id = $img.id.replace("img", "obj-label-conf");
                     const $object_label_conf_svg = document.getElementById(object_label_conf_svg_id);
                     $object_label_conf_svg.textContent = obj_label + " (" + obj_conf + "%)";
-                    $object_label_conf_svg.setAttribute("x", (left + x));
-                    $object_label_conf_svg.setAttribute("y", (top + y));
+                    $object_label_conf_svg.setAttribute("x", (left + x + 6));
+                    $object_label_conf_svg.setAttribute("y", (top + y - 6));
                 }
             }
-
-            $img.setAttribute('href', data);
         }
 
         RED.events.on("editor:save", redraw)
