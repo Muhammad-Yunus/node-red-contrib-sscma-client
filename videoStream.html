@@ -3,7 +3,7 @@
         const DEFAULT_WIDTH = 160
         RED.nodes.registerType('video stream', {
             category: 'sscma-client',
-            paletteLabel: "viewer",
+            paletteLabel: "video stream",
             icon: "watch.png",
             align: 'right',
             color: '#FFAAAA',
@@ -78,7 +78,7 @@
             },
 
             label: function () {
-                return this.name || "viewer";
+                return this.name || "video stream";
             },
             oneditprepare: function () {
                 let node = this;
