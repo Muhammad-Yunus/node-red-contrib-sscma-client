@@ -195,6 +195,18 @@
                 bubble.setAttribute('stroke', '#999999');
                 $container.insertBefore(bubble, $container.lastChild.nextSibling);
 
+                const img = document.createElementNS("http://www.w3.org/2000/svg", 'image');
+                img.setAttribute('id', 'sscma-client-viewer-img-' + id);
+                img.setAttribute('x', '1');
+                img.setAttribute('y', '47');
+                img.setAttribute('width', node.width || DEFAULT_WIDTH);
+                $(img).on("click", function r(el) {
+                    _remove(id)
+                })
+                $container.insertBefore(img, $container.lastChild.nextSibling);
+                $img = img;
+
+
                 const object_bbox_svg = document.createElementNS("http://www.w3.org/2000/svg", 'polyline');
                 object_bbox_svg.setAttribute('id', 'sscma-client-viewer-obj-bbox-' + id);
                 object_bbox_svg.setAttribute('style', 'fill:transparent');
@@ -217,17 +229,7 @@
                 object_label_conf_svg.setAttribute("fill", "#fff");
                 $container.insertBefore(object_label_conf_svg, $container.lastChild.nextSibling);
 
-                const img = document.createElementNS("http://www.w3.org/2000/svg", 'image');
-                img.setAttribute('id', 'sscma-client-viewer-img-' + id);
-                img.setAttribute('x', '1');
-                img.setAttribute('y', '47');
-                img.setAttribute('width', node.width || DEFAULT_WIDTH);
 
-                $(img).on("click", function r(el) {
-                    _remove(id)
-                })
-                $container.insertBefore(img, $container.lastChild.nextSibling);
-                $img = img;
             }
 
             i.onload = function () {
