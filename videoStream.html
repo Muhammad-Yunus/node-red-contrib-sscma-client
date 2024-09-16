@@ -172,7 +172,7 @@
             $bubble && $bubble.remove()
             $object_bbox_svg && $object_bbox_svg.remove()
             $object_label_conf_svg && $object_label_conf_svg.remove()
-            
+
             if (latestImages[id]) {
                 render(id, latestImages[id], latestObjectBbox[id], latestObjectConf[i], latestObjectLabel[i], node)
             }
@@ -192,16 +192,11 @@
                 bubble.setAttribute('stroke', '#999999');
                 $container.insertBefore(bubble, $container.lastChild.nextSibling);
 
-                const img = document.createElementNS("http://www.w3.org/2000/svg", 'image');
-                img.setAttribute('id', 'sscma-client-viewer-img-' + id);
-                img.setAttribute('x', '1');
-                img.setAttribute('y', '47');
-                img.setAttribute('width', node.width || DEFAULT_WIDTH);
-
                 const object_bbox_svg = document.createElementNS("http://www.w3.org/2000/svg", 'polyline');
                 object_bbox_svg.setAttribute('id', 'sscma-client-viewer-obj-bbox-' + id);
                 object_bbox_svg.setAttribute('style', 'fill:transparent');
                 object_bbox_svg.setAttribute('stroke', '#fa0000');
+                object_bbox_svg.setAttribute('stroke-width', '4');
                 $container.insertBefore(object_bbox_svg, $container.lastChild.nextSibling);
 
                 const object_label_conf_svg = document.createElementNS("http://www.w3.org/2000/svg", 'text');
@@ -211,6 +206,12 @@
                 object_label_conf_svg.setAttribute('stroke', '#fa0000');
                 //object_label_conf_svg.setAttribute("fill", "#fa0000");
                 $container.insertBefore(object_label_conf_svg, $container.lastChild.nextSibling);
+
+                const img = document.createElementNS("http://www.w3.org/2000/svg", 'image');
+                img.setAttribute('id', 'sscma-client-viewer-img-' + id);
+                img.setAttribute('x', '1');
+                img.setAttribute('y', '47');
+                img.setAttribute('width', node.width || DEFAULT_WIDTH);
 
                 $(img).on("click", function r(el) {
                     _remove(id)
